@@ -11,6 +11,7 @@ import CircleButton from "./components/CircleButton";
 import EmojiPicker from "./components/EmojiPicker";
 import EmojiList from "./components/EmojiList";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import EmojiSticker from "./components/EmojiSticker";
 const PlaceholderImage = require("./assets/images/background-image.png");
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
         <GestureHandlerRootView style={styles.container}>
             <View style={styles.imageContainer}>
                 <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+                {pickedEmoji !== null ? <EmojiSticker imageSize={40} stickerSource={pickedEmoji} /> : null}
             </View>
             {showAppOptions ? (
                 <View style={styles.optionsContainer}>
