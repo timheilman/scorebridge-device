@@ -3,10 +3,20 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
     "android": "expo start --android",
+    "format": "prettier --write .",
     "ios": "expo start --ios",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
+    "start": "expo start",
+    "tidy": "npm run lint; npm run format",
+    "ts:check": "tsc",
     "web": "expo start --web"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -14,20 +24,28 @@
     "@types/react": "~18.2.14",
     "expo": "~49.0.8",
     "expo-image-picker": "~14.3.2",
+    "expo-media-library": "~15.4.1",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.4",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-reanimated": "~3.3.0",
-    "react-native-web": "~0.19.6",
-    "typescript": "^5.1.3",
     "react-native-view-shot": "3.7.0",
-    "expo-media-library": "~15.4.1"
+    "react-native-web": "~0.19.6",
+    "typescript": "^5.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9"
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@types/react-native": "^0.72.2",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
+    "eslint": "^8.48.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "prettier": "^3.0.3"
   },
   "private": true
 }
