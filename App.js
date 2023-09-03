@@ -1,6 +1,3 @@
-// import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
 // template from https://docs.expo.dev/tutorial/introduction/
 import { StyleSheet, Text, View } from 'react-native';
 
