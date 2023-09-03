@@ -1,8 +1,9 @@
+import domtoimage from "dom-to-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useState } from "react";
-import { ImageSourcePropType, StyleSheet, View } from "react-native";
+import { ImageSourcePropType, Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { captureRef } from "react-native-view-shot";
 
@@ -13,13 +14,12 @@ import EmojiPicker from "./components/EmojiPicker";
 import EmojiSticker from "./components/EmojiSticker";
 import IconButton from "./components/IconButton";
 import ImageViewer from "./components/ImageViewer";
-
 const PlaceholderImage =
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("./assets/images/background-image.png") as { uri: string };
 
 export default function App() {
-  const imageRef = useRef<View | null>(null);
+  const imageRef = useRef<(View & Node) | null>(null);
   const [status, requestPermission] = MediaLibrary.usePermissions();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
@@ -65,21 +65,37 @@ export default function App() {
   };
 
   const onSaveImageAsync = async () => {
-    console.log("Does this go to the dev server's stdout?");
-    try {
-      const localUri = await captureRef(imageRef, {
-        height: 440,
-        quality: 1,
-      });
-
-      await MediaLibrary.saveToLibraryAsync(localUri);
-      if (localUri) {
-        alert("Saved!");
+    if (Platform.OS !== "web") {
+      try {
+        const localUri = await captureRef(imageRef, {
+          height: 440,
+          quality: 1,
+        });
+        await MediaLibrary.saveToLibraryAsync(localUri);
+        if (localUri) {
+          alert("Saved!");
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      try {
+        const dataUrl = await domtoimage.toJpeg(imageRef.current, {
+          quality: 0.95,
+          width: 320,
+          height: 440,
+        });
+
+        const link = document.createElement("a");
+        link.download = "sticker-smash.jpeg";
+        link.href = dataUrl;
+        link.click();
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
+
   const dispatchSaveImage = () => {
     console.log("how bout dat");
     onSaveImageAsync().catch(() => {
