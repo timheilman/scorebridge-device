@@ -29,8 +29,6 @@ export default function App() {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
-    console.log("icon options:");
-    console.log(Object.keys(MaterialIcons.glyphMap));
     alert("Registering club device...\nTODO: implement gql mutation for this");
   };
 
