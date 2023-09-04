@@ -1,3 +1,4 @@
+import { Amplify, Auth } from "aws-amplify";
 import * as Localization from "expo-localization";
 import { StatusBar } from "expo-status-bar";
 import { I18n } from "i18n-js";
@@ -24,6 +25,47 @@ function regCodeForDisplay() {
     .match(/.{1,4}/g)
     ?.join("-");
 }
+// WARNING: do not DRY these out into a single function, as the process by which
+// they are included does not tolerate access by variable string; they must be
+// accessed this way:
+if (!process.env.EXPO_PUBLIC_AWS_REGION) {
+  throw new Error("EXPO_PUBLIC_AWS_REGION is not defined");
+}
+if (!process.env.EXPO_PUBLIC_COGNITO_USER_POOL_ID) {
+  throw new Error("EXPO_PUBLIC_COGNITO_USER_POOL_ID is not defined");
+}
+if (!process.env.EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_WEB) {
+  throw new Error("EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_WEB is not defined");
+}
+if (!process.env.EXPO_PUBLIC_API_URL) {
+  throw new Error("EXPO_PUBLIC_API_URL is not defined");
+}
+if (!process.env.EXPO_PUBLIC_STAGE) {
+  throw new Error("EXPO_PUBLIC_API_URL is not defined");
+}
+
+Amplify.configure({
+  API: {
+    graphql_headers: async () => {
+      try {
+        const session = await Auth.currentSession();
+        return {
+          Authorization: session.getIdToken().getJwtToken(),
+        };
+      } catch (e) {
+        return {};
+      }
+    },
+  },
+  Auth: {
+    region: process.env.EXPO_PUBLIC_AWS_REGION,
+    userPoolId: process.env.EXPO_PUBLIC_COGNITO_USER_POOL_ID,
+    userPoolWebClientId:
+      process.env.EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_WEB,
+  },
+  aws_appsync_graphqlEndpoint: process.env.EXPO_PUBLIC_API_URL,
+  aws_appsync_region: process.env.EXPO_PUBLIC_AWS_REGION,
+});
 
 export default function App() {
   const [regCode] = useState(regCodeForDisplay());
