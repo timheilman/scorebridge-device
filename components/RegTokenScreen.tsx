@@ -3,15 +3,18 @@ import { StyleSheet, Text, View } from "react-native";
 import i18n from "../i18n";
 import IconButton from "./IconButton";
 
+function forDisplay(regToken: string) {
+  return regToken.match(/.{1,4}/g)?.join("-");
+}
 export function RegTokenScreen(props: {
-  regToken: string | undefined;
+  regToken: string;
   onPress: () => void;
 }) {
   return (
     <View style={styles.regScreenContainer}>
       <View>
         <Text style={styles.regTokenLabel}>{i18n.t("regTokenLabel")}</Text>
-        <Text style={styles.regTokenValue}>{props.regToken}</Text>
+        <Text style={styles.regTokenValue}>{forDisplay(props.regToken)}</Text>
       </View>
       <IconButton
         icon="cards-playing"

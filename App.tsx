@@ -1,11 +1,17 @@
+import { CognitoUser } from "amazon-cognito-identity-js";
 import { Amplify, Auth } from "aws-amplify";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet, Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { RegTokenScreen } from "./components/RegTokenScreen";
-import { randomRegToken } from "./scorebridge-ts-submodule/regTokenUtils";
+import i18n from "./i18n";
+import {
+  randomRegToken,
+  regTokenSecretPart,
+  regTokenToEmail,
+} from "./scorebridge-ts-submodule/regTokenUtils";
 
 // WARNING: do not DRY these out into a single function, as the process by which
 // they are included does not tolerate access by variable string; they must be
@@ -51,12 +57,23 @@ Amplify.configure({
 
 export default function App() {
   const [regToken] = useState(randomRegToken());
+  const [user, setUser] = useState<undefined | CognitoUser>(undefined);
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
-    Alert.alert(
-      "Registering club device...\nTODO: implement gql mutation for this",
-    );
+    const args = {
+      username: regTokenToEmail(
+        regToken,
+        process.env.EXPO_PUBLIC_STAGE as string,
+      ),
+      password: regTokenSecretPart(regToken),
+    };
+    Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
+    const user = (await Auth.signIn(args)) as CognitoUser;
+    Alert.alert(`done awaiting signin, !!user is ${!!user}`);
+    if (user) {
+      setUser(user);
+    }
   };
 
   const dispatchRegister = () => {
@@ -72,7 +89,11 @@ export default function App() {
   };
   return (
     <GestureHandlerRootView style={styles.container}>
-      <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
+      {user ? (
+        <Text>GOT A USER, YAY!</Text>
+      ) : (
+        <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
+      )}
       <StatusBar style="auto" />
     </GestureHandlerRootView>
   );
