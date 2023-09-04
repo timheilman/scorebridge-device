@@ -23,6 +23,7 @@
     "@expo/webpack-config": "^19.0.0",
     "@types/dom-to-image": "^2.6.0",
     "@types/react": "~18.2.14",
+    "aws-amplify": "^5.3.10",
     "dom-to-image": "^2.6.0",
     "expo": "~49.0.8",
     "expo-image-picker": "~14.3.2",
