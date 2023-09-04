@@ -1,7 +1,9 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   },
   "include": ["components", "scorebridge-ts-submodule", "App.tsx"],
   "exclude": ["node_modules/**/*", "babel.config.js"]
