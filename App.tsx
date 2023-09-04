@@ -1,11 +1,10 @@
 import { Amplify, Auth } from "aws-amplify";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import IconButton from "./components/IconButton";
-import i18n from "./i18n";
+import { RegTokenScreen } from "./components/RegTokenScreen";
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 function randomRegCode() {
   return [...Array(16).keys()]
@@ -88,17 +87,7 @@ export default function App() {
   };
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View style={styles.regScreenContainer}>
-        <View>
-          <Text style={styles.regCodeLabel}>{i18n.t("regCodeLabel")}</Text>
-          <Text style={styles.regCodeValue}>{regCode}</Text>
-        </View>
-        <IconButton
-          icon="cards-playing"
-          label="Register Club Device"
-          onPress={dispatchRegister}
-        />
-      </View>
+      <RegTokenScreen regToken={regCode} onPress={dispatchRegister} />
       <StatusBar style="auto" />
     </GestureHandlerRootView>
   );
@@ -109,19 +98,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     alignItems: "center",
-  },
-  regScreenContainer: {
-    paddingTop: 58,
-    alignItems: "center",
-    flexDirection: "column",
-  },
-  regCodeLabel: {
-    color: "#fff",
-    marginBottom: 12,
-  },
-  regCodeValue: {
-    color: "#fff",
-    fontSize: 24,
-    marginBottom: 12,
   },
 });
