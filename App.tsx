@@ -1,151 +1,67 @@
-import domtoimage from "dom-to-image";
-import * as ImagePicker from "expo-image-picker";
-import * as MediaLibrary from "expo-media-library";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
-import { useRef, useState } from "react";
-import { ImageSourcePropType, Platform, StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { captureRef } from "react-native-view-shot";
 
-import Button from "./components/Button";
-import CircleButton from "./components/CircleButton";
-import EmojiList from "./components/EmojiList";
-import EmojiPicker from "./components/EmojiPicker";
-import EmojiSticker from "./components/EmojiSticker";
 import IconButton from "./components/IconButton";
-import ImageViewer from "./components/ImageViewer";
-const PlaceholderImage =
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("./assets/images/background-image.png") as { uri: string };
+
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function randomRegCode() {
+  return [...Array(16).keys()]
+    .map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (_s) => {
+        return characters.charAt(Math.floor(Math.random() * characters.length));
+      },
+    )
+    .join("");
+}
+
+function regCodeForDisplay() {
+  return randomRegCode()
+    .match(/.{1,4}/g)
+    ?.join("-");
+}
 
 export default function App() {
-  const imageRef = useRef<(View & Node) | null>(null);
-  const [status, requestPermission] = MediaLibrary.usePermissions();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [showAppOptions, setShowAppOptions] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [pickedEmoji, setPickedEmoji] = useState<ImageSourcePropType | null>(
-    null,
-  );
-  if (status === null) {
-    requestPermission().catch((e: { message: string }) =>
-      alert(`Problem requesting permission ${e.message}`),
-    );
-  }
+  const [regCode] = useState(regCodeForDisplay());
 
-  const pickImageAsync = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-      setShowAppOptions(true);
-    } else {
-      alert("You did not select any image.");
-    }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const onDispatchRegisterAsync = async () => {
+    console.log("icon options:");
+    console.log(Object.keys(MaterialIcons.glyphMap));
+    alert("Registering club device...\nTODO: implement gql mutation for this");
   };
 
-  const wrapPickImageAsync = () => {
-    pickImageAsync()
-      .then(() => {})
-      .catch(() => alert("PickImageAsync failed"));
-  };
-  const onReset = () => {
-    setShowAppOptions(false);
-  };
-
-  const onAddSticker = () => {
-    setIsModalVisible(true);
-  };
-
-  const onModalClose = () => {
-    setIsModalVisible(false);
-  };
-
-  const onSaveImageAsync = async () => {
-    if (Platform.OS !== "web") {
-      try {
-        const localUri = await captureRef(imageRef, {
-          height: 440,
-          quality: 1,
-        });
-        await MediaLibrary.saveToLibraryAsync(localUri);
-        if (localUri) {
-          alert("Saved!");
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try {
-        if (imageRef.current) {
-          const dataUrl = await domtoimage.toJpeg(imageRef.current, {
-            quality: 0.95,
-            width: 320,
-            height: 440,
-          });
-
-          const link = document.createElement("a");
-          link.download = "sticker-smash.jpeg";
-          link.href = dataUrl;
-          link.click();
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  };
-
-  const dispatchSaveImage = () => {
-    console.log("how bout dat");
-    onSaveImageAsync().catch(() => {
-      alert(`Unreachable; try-catch would have caught`);
+  const dispatchRegister = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onDispatchRegisterAsync().catch((e: any) => {
+      alert(
+        `Error: ${
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          e?.message ? e.message : e
+        }`,
+      );
     });
   };
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <View ref={imageRef} collapsable={false}>
-          <ImageViewer
-            placeholderImageSource={PlaceholderImage}
-            selectedImage={selectedImage}
-          />
-          {pickedEmoji !== null ? (
-            <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
-          ) : null}
+      <View style={styles.regScreenContainer}>
+        <View>
+          <Text style={styles.regCodeLabel}>
+            TODO: translate me; Please enter the following registration code
+            into the portal to register this club device:
+          </Text>
+          <Text style={styles.regCodeValue}>{regCode}</Text>
         </View>
+        <IconButton
+          icon="cards-playing"
+          label="Register Club Device"
+          onPress={dispatchRegister}
+        />
       </View>
-      {showAppOptions ? (
-        <View style={styles.optionsContainer}>
-          <View style={styles.optionsRow}>
-            <IconButton icon="refresh" label="Reset" onPress={onReset} />
-            <CircleButton onPress={onAddSticker} />
-            <IconButton
-              icon="save-alt"
-              label="Save"
-              onPress={dispatchSaveImage}
-            />
-          </View>
-        </View>
-      ) : (
-        <View style={styles.footerContainer}>
-          <Button
-            theme="primary"
-            label="Choose a photo"
-            onPress={wrapPickImageAsync}
-          />
-          <Button
-            label="Use this photo"
-            onPress={() => setShowAppOptions(true)}
-          />
-        </View>
-      )}
-      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
-      </EmojiPicker>
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
     </GestureHandlerRootView>
   );
 }
@@ -156,20 +72,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#25292e",
     alignItems: "center",
   },
-  imageContainer: {
-    flex: 1,
+  regScreenContainer: {
     paddingTop: 58,
-  },
-  footerContainer: {
-    flex: 1 / 3,
     alignItems: "center",
+    flexDirection: "column",
   },
-  optionsContainer: {
-    position: "absolute",
-    bottom: 80,
+  regCodeLabel: {
+    color: "#fff",
+    marginBottom: 12,
   },
-  optionsRow: {
-    alignItems: "center",
-    flexDirection: "row",
+  regCodeValue: {
+    color: "#fff",
+    fontSize: 24,
+    marginBottom: 12,
   },
 });
