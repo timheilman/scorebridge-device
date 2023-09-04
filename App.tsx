@@ -1,10 +1,11 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import IconButton from "./components/IconButton";
+import TypesafeTranslationT from "./scorebridge-ts-submodule/TypesafeTranslationT";
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 function randomRegCode() {
@@ -25,6 +26,7 @@ function regCodeForDisplay() {
 }
 
 export default function App() {
+  const t = useTranslation("translation").t as TypesafeTranslationT;
   const [regCode] = useState(regCodeForDisplay());
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -47,10 +49,7 @@ export default function App() {
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.regScreenContainer}>
         <View>
-          <Text style={styles.regCodeLabel}>
-            TODO: translate me; Please enter the following registration code
-            into the portal to register this club device:
-          </Text>
+          <Text style={styles.regCodeLabel}>{t("regCodeLabel")}</Text>
           <Text style={styles.regCodeValue}>{regCode}</Text>
         </View>
         <IconButton
