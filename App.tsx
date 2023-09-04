@@ -1,13 +1,11 @@
 import { Amplify, Auth } from "aws-amplify";
-import * as Localization from "expo-localization";
 import { StatusBar } from "expo-status-bar";
-import { I18n } from "i18n-js";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import IconButton from "./components/IconButton";
-import { translations } from "./locales/localization";
+import i18n from "./i18n";
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 function randomRegCode() {
   return [...Array(16).keys()]
@@ -69,12 +67,7 @@ Amplify.configure({
 
 export default function App() {
   const [regCode] = useState(regCodeForDisplay());
-  const [locale] = useState(Localization.locale);
-  const i18n = new I18n(translations);
-  i18n.locale = locale;
-  i18n.enableFallback = true;
-  i18n.defaultLocale = "en";
-  const t = i18n.t;
+
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
     alert("Registering club device...\nTODO: implement gql mutation for this");
