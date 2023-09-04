@@ -5,23 +5,8 @@ import { Alert, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { RegTokenScreen } from "./components/RegTokenScreen";
-const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-function randomRegCode() {
-  return [...Array(16).keys()]
-    .map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      (_s) => {
-        return characters.charAt(Math.floor(Math.random() * characters.length));
-      },
-    )
-    .join("");
-}
+import { randomRegToken } from "./scorebridge-ts-submodule/regTokenUtils";
 
-function regCodeForDisplay() {
-  return randomRegCode()
-    .match(/.{1,4}/g)
-    ?.join("-");
-}
 // WARNING: do not DRY these out into a single function, as the process by which
 // they are included does not tolerate access by variable string; they must be
 // accessed this way:
@@ -65,7 +50,7 @@ Amplify.configure({
 });
 
 export default function App() {
-  const [regCode] = useState(regCodeForDisplay());
+  const [regToken] = useState(randomRegToken());
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
@@ -87,7 +72,7 @@ export default function App() {
   };
   return (
     <GestureHandlerRootView style={styles.container}>
-      <RegTokenScreen regToken={regCode} onPress={dispatchRegister} />
+      <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
       <StatusBar style="auto" />
     </GestureHandlerRootView>
   );
