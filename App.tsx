@@ -1,7 +1,7 @@
 import { Amplify, Auth } from "aws-amplify";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import IconButton from "./components/IconButton";
@@ -70,13 +70,15 @@ export default function App() {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
-    alert("Registering club device...\nTODO: implement gql mutation for this");
+    Alert.alert(
+      "Registering club device...\nTODO: implement gql mutation for this",
+    );
   };
 
   const dispatchRegister = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onDispatchRegisterAsync().catch((e: any) => {
-      alert(
+      Alert.alert(
         `Error: ${
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           e?.message ? e.message : e
