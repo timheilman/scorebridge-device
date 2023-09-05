@@ -1,4 +1,10 @@
 export const en = {
-  regTokenLabel:
-    "Please enter this registration code into the portal to register this tablet with your club, then click the button below.",
+  regTokenScreen: {
+    description:
+      "Please enter the following registration code into the admin portal, " +
+      'then tap the "Onboard This Device" button',
+    RegistrationToken: "Registration Token",
+    AdminPortalUrl: "Admin Portal URL",
+    OnboardThisDevice: "Onboard This Device",
+  },
 };

@@ -14,15 +14,23 @@ export const RegTokenScreen = (props: {
   return (
     <View style={styles.regScreenContainer}>
       <View>
-        <Text style={styles.regTokenLabel}>{i18n.t("regTokenLabel")}</Text>
         <Text style={styles.regTokenLabel}>
-          {requiredExpoPublicEnvVar("PORTAL_URL")}
+          {i18n.t("regTokenScreen.description")}
         </Text>
-        <Text style={styles.regTokenValue}>{forDisplay(props.regToken)}</Text>
+        <Text style={styles.regTokenLabel}>
+          {`${i18n.t("regTokenScreen.RegistrationToken")}: ${forDisplay(
+            props.regToken,
+          )}`}
+        </Text>
+        <Text style={styles.regTokenLabel}>
+          {`${i18n.t(
+            "regTokenScreen.AdminPortalUrl",
+          )}: ${requiredExpoPublicEnvVar("PORTAL_URL")}`}
+        </Text>
       </View>
       <IconButton
         icon="cards-playing"
-        label="Register Club Device"
+        label={i18n.t("regTokenScreen.OnboardThisDevice")}
         onPress={props.onPress}
       />
     </View>
@@ -37,11 +45,12 @@ const styles = StyleSheet.create({
   },
   regTokenLabel: {
     color: "#fff",
+    fontSize: 32,
     marginBottom: 12,
   },
   regTokenValue: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 48,
     marginBottom: 12,
   },
 });

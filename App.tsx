@@ -76,7 +76,7 @@ export default function App() {
       {/*<PersistGate>*/}
       <GestureHandlerRootView style={styles.container}>
         {user ? (
-          <PlayerNameEntryScreen />
+          <PlayerNameEntryScreen user={user} />
         ) : (
           <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
         )}
