@@ -30,7 +30,7 @@ Amplify.configure({
     region: requiredExpoPublicEnvVar("AWS_REGION"),
     userPoolId: requiredExpoPublicEnvVar("COGNITO_USER_POOL_ID"),
     userPoolWebClientId: requiredExpoPublicEnvVar(
-      "COGNITO_USER_POOL_CLIENT_ID_WEB",
+      "COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE",
     ),
   },
   aws_appsync_graphqlEndpoint: requiredExpoPublicEnvVar("API_URL"),

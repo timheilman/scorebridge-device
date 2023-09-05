@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import i18n from "../i18n";
+import { requiredExpoPublicEnvVar } from "../utils/requiredExpoPublicEnvVar";
 import IconButton from "./IconButton";
 
 function forDisplay(regToken: string) {
@@ -14,6 +15,9 @@ export function RegTokenScreen(props: {
     <View style={styles.regScreenContainer}>
       <View>
         <Text style={styles.regTokenLabel}>{i18n.t("regTokenLabel")}</Text>
+        <Text style={styles.regTokenLabel}>
+          {requiredExpoPublicEnvVar("PORTAL_URL")}
+        </Text>
         <Text style={styles.regTokenValue}>{forDisplay(props.regToken)}</Text>
       </View>
       <IconButton
