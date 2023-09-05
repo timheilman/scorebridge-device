@@ -7,10 +7,10 @@ import IconButton from "./IconButton";
 function forDisplay(regToken: string) {
   return regToken.match(/.{1,4}/g)?.join("-");
 }
-export function RegTokenScreen(props: {
+export const RegTokenScreen = (props: {
   regToken: string;
   onPress: () => void;
-}) {
+}) => {
   return (
     <View style={styles.regScreenContainer}>
       <View>
@@ -27,7 +27,7 @@ export function RegTokenScreen(props: {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   regScreenContainer: {

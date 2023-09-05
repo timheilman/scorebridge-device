@@ -2,17 +2,22 @@ import { CognitoUser } from "amazon-cognito-identity-js";
 import { Amplify, Auth } from "aws-amplify";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Alert, StyleSheet, Text } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider as ReactReduxProvider } from "react-redux";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// import { PersistGate } from "redux-persist/integration/react";
 import { RegTokenScreen } from "./components/RegTokenScreen";
+import { PlayerNameEntryScreen } from "./features/playerNameEntry/playerNameEntryScreen";
 import {
   randomRegToken,
   regTokenSecretPart,
   regTokenToEmail,
 } from "./scorebridge-ts-submodule/regTokenUtils";
 import { requiredExpoPublicEnvVar } from "./utils/requiredExpoPublicEnvVar";
-
+import { store } from "./utils/store";
 Amplify.configure({
   API: {
     graphql_headers: async () => {
@@ -67,14 +72,18 @@ export default function App() {
     });
   };
   return (
-    <GestureHandlerRootView style={styles.container}>
-      {user ? (
-        <Text>GOT A USER, YAY!</Text>
-      ) : (
-        <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
-      )}
-      <StatusBar style="auto" />
-    </GestureHandlerRootView>
+    <ReactReduxProvider store={store}>
+      {/*<PersistGate>*/}
+      <GestureHandlerRootView style={styles.container}>
+        {user ? (
+          <PlayerNameEntryScreen />
+        ) : (
+          <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
+        )}
+        <StatusBar style="auto" />
+      </GestureHandlerRootView>
+      {/*</PersistGate>*/}
+    </ReactReduxProvider>
   );
 }
 
