@@ -5,6 +5,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
   },
-  "include": ["components", "scorebridge-ts-submodule", "App.tsx", "locales"],
+  "include": ["components", "scorebridge-ts-submodule", "App.tsx", "locales", "utils"],
   "exclude": ["node_modules/**/*", "babel.config.js", "metro.config.js"]
 }
