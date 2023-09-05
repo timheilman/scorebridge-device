@@ -18,22 +18,20 @@ varsAsWeWantThem["COGNITO_USER_POOL_ID"] =
 varsAsWeWantThem["PORTAL_URL"] = process.env.EXPO_PUBLIC_PORTAL_URL;
 varsAsWeWantThem["STAGE"] = process.env.EXPO_PUBLIC_STAGE;
 
-function throwErr(envVar: string) {
-  throw new Error(
-    `EXPO_PUBLIC_${envVar} not defined and patched-through as required by the poor-man's ` +
-      `env vars accommodation within expo`,
-  );
-}
-
-// error at startup if any of the already-patched-through required env vars are missing
 ALL_REQUIRED_ENV_VARS.forEach((envVar) => {
   if (varsAsWeWantThem[envVar] === undefined) {
-    throwErr(envVar);
+    throw new Error(
+      `At startup, EXPO_PUBLIC_${envVar} not defined and patched-through as required by the poor-man's ` +
+        `env vars accommodation within expo`,
+    );
   }
 });
 export const requiredExpoPublicEnvVar = (envVar: string) => {
   if (varsAsWeWantThem[envVar] === undefined) {
-    throwErr(envVar);
+    throw new Error(
+      `At invocation, EXPO_PUBLIC_${envVar} not defined and patched-through as required by the poor-man's ` +
+        `env vars accommodation within expo`,
+    );
   }
   return varsAsWeWantThem[envVar] as string;
 };
