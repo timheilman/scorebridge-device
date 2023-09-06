@@ -3,7 +3,7 @@ import { Hub } from "aws-amplify";
 import gql from "graphql-tag";
 import { useEffect } from "react";
 
-import { Club } from "../../appsync";
+import { Club } from "../../scorebridge-ts-submodule/graphql/appsync";
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
 import {
   deleteAllSubs,
