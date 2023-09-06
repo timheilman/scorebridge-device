@@ -1,17 +1,14 @@
-import { GraphQLSubscription } from "@aws-amplify/api";
 import { CONNECTION_STATE_CHANGE, ConnectionState } from "@aws-amplify/pubsub";
-import { API, graphqlOperation, Hub } from "aws-amplify";
+import { Hub } from "aws-amplify";
 import gql from "graphql-tag";
 import { useEffect } from "react";
 
 import { Club } from "../../appsync";
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
-import { deleteSub } from "../../scorebridge-ts-submodule/subscriptions";
 import {
-  allSubscriptionsI,
-  setSubscriptionStatus,
-  subIdToSubGql,
-} from "../../scorebridge-ts-submodule/subscriptionStatesSlice";
+  deleteAllSubs,
+  typedSubscription,
+} from "../../scorebridge-ts-submodule/subscriptions";
 import { gqlMutation } from "../../utils/gql";
 import { useAppDispatch } from "../../utils/hooks";
 import { logFn } from "../../utils/logging";
@@ -52,102 +49,31 @@ const fetchRecentData = async (clubId: string, dispatch: any) => {
   });
 };
 
-function subscribeAndFetch(
-  typedSubscription: <T>(
-    subId: keyof allSubscriptionsI,
-    clubId: string,
-    callback: (arg0: T) => void,
-    errCallback: (arg0: unknown) => void,
-    clubIdVarName?: string,
-  ) => void,
-  clubId: string,
-  dispatch: any,
-) {
+function subscribeAndFetch(clubId: string, appDispatch: any) {
   log("hubListen.connected", "debug");
-  typedSubscription<{ updatedClub: Club }>(
-    "updatedClub",
+  typedSubscription<{ updatedClub: Club }>({
+    subId: "updatedClub",
     clubId,
-    (res) => {
-      dispatch(setClub(res.updatedClub));
+    callback: (res) => {
+      appDispatch(setClub(res.updatedClub));
     },
-    (e: any) => {
-      dispatch(
-        setSubscriptionStatus([
-          "updatedClub",
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `failed post-initialization: ${e.error.errors[0].message}`,
-        ]),
-      );
-    },
-    "id",
-  );
+    appDispatch,
+    clubIdVarName: "id",
+  });
 
-  void lcd(fetchRecentData(clubId, dispatch), "hubListen.subscribeAndFetch");
+  void lcd(fetchRecentData(clubId, appDispatch), "hubListen.subscribeAndFetch");
 }
 export interface SubscriptionsParams {
   clubId: string;
 }
 export default function Subscriptions({ clubId }: SubscriptionsParams) {
-  const dispatch = useAppDispatch();
+  const appDispatch = useAppDispatch();
 
   useEffect(() => {
-    const pool: Record<string, unknown> = {};
-
     log("initialFetch", "debug");
     let priorConnectionState: ConnectionState;
-    const typedSubscription = <T,>(
-      subId: keyof allSubscriptionsI,
-      clubId: string,
-      callback: (arg0: T) => void,
-      errCallback: (arg0: unknown) => void,
-      clubIdVarName = "clubId",
-    ) => {
-      try {
-        deleteSub(pool, dispatch, subId, log, "debug");
-        log("subs.deletedAndSubscribingTo", "debug", { subId, clubId });
-        if (!pool[subId]) {
-          const variables: Record<string, unknown> = {};
-          variables[clubIdVarName] = clubId;
-          pool[subId] = API.graphql<GraphQLSubscription<T>>({
-            authMode: "AMAZON_COGNITO_USER_POOLS",
-            ...graphqlOperation(subIdToSubGql[subId], variables),
-          }).subscribe({
-            next: (data) => {
-              if (!data.value?.data) {
-                log("subscribeTo.noData", "error", { data });
-                return;
-              }
-              log("subScribeTo.end.success", "info", { data });
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              callback(data.value.data);
-            },
-            error: (e) => {
-              errCallback(e);
-            },
-          });
-        }
-        dispatch(setSubscriptionStatus([subId, "successfullySubscribed"]));
-      } catch (e: any) {
-        if (e.message) {
-          dispatch(
-            setSubscriptionStatus([
-              subId,
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              `failed at initialization: ${e.message}`,
-            ]),
-          );
-        } else {
-          dispatch(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            setSubscriptionStatus([subId, `failed at initialization: ${e}`]),
-          );
-        }
-        return;
-      }
-    };
     log("hubListen.api.beforestart", "debug");
-    subscribeAndFetch(typedSubscription, clubId, dispatch);
+    subscribeAndFetch(clubId, appDispatch);
 
     log("hubListen.api.before", "debug");
     const stopListening = Hub.listen("api", (data: any) => {
@@ -159,7 +85,7 @@ export default function Subscriptions({ clubId }: SubscriptionsParams) {
           payload.data.connectionState === ConnectionState.Connected
         ) {
           void lcd(
-            fetchRecentData(clubId, dispatch),
+            fetchRecentData(clubId, appDispatch),
             "hublisten.api.fetchRecentData",
           );
         }
@@ -169,17 +95,9 @@ export default function Subscriptions({ clubId }: SubscriptionsParams) {
       }
     });
     return () => {
-      Object.keys(subIdToSubGql).forEach((subId: string) => {
-        deleteSub(
-          pool,
-          dispatch,
-          subId as keyof allSubscriptionsI /* actually safe */,
-          log,
-          "debug",
-        );
-      });
+      deleteAllSubs(appDispatch);
       stopListening();
     };
-  }, [dispatch, clubId]);
+  }, [appDispatch, clubId]);
   return <></>;
 }
