@@ -51,14 +51,14 @@ const fetchRecentData = async (clubId: string, dispatch: any) => {
 
 function subscribeAndFetch(clubId: string, appDispatch: any) {
   log("hubListen.connected", "debug");
-  typedSubscription<{ updatedClub: Club }>({
+  typedSubscription({
     subId: "updatedClub",
     clubId,
     callback: (res) => {
       appDispatch(setClub(res.updatedClub));
     },
-    appDispatch,
     clubIdVarName: "id",
+    appDispatch,
   });
 
   void lcd(fetchRecentData(clubId, appDispatch), "hubListen.subscribeAndFetch");
