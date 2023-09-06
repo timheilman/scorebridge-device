@@ -1,10 +1,10 @@
 import { CognitoUser } from "amazon-cognito-identity-js";
 import { StyleSheet, Text } from "react-native";
 
+import { selectSubscriptionStateById } from "../../scorebridge-ts-submodule/subscriptionStatesSlice";
 import { useAppSelector } from "../../utils/hooks";
 import { useClubId } from "../../utils/useClubId";
 import Subscriptions from "../subscriptions/Subscriptions";
-import { selectSubscriptionById } from "../subscriptions/subscriptionsSlice";
 import { selectClub } from "./playerNameEntrySlice";
 
 export interface PlayerNameEntryScreenParams {
@@ -12,7 +12,9 @@ export interface PlayerNameEntryScreenParams {
 }
 export function PlayerNameEntryScreen({ user }: PlayerNameEntryScreenParams) {
   const club = useAppSelector(selectClub);
-  const clubSubStatus = useAppSelector(selectSubscriptionById("updatedClub"));
+  const clubSubStatus = useAppSelector(
+    selectSubscriptionStateById("updatedClub"),
+  );
   const clubId = useClubId(user);
 
   return (

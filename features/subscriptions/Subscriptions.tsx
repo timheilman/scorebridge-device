@@ -7,15 +7,15 @@ import { useEffect } from "react";
 import { Club } from "../../appsync";
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
 import { deleteSub } from "../../scorebridge-ts-submodule/subscriptions";
-import { gqlMutation } from "../../utils/gql";
-import { useAppDispatch } from "../../utils/hooks";
-import { logFn } from "../../utils/logging";
-import { setClub } from "../playerNameEntry/playerNameEntrySlice";
 import {
   allSubscriptionsI,
   setSubscriptionStatus,
   subIdToSubGql,
-} from "./subscriptionsSlice";
+} from "../../scorebridge-ts-submodule/subscriptionStatesSlice";
+import { gqlMutation } from "../../utils/gql";
+import { useAppDispatch } from "../../utils/hooks";
+import { logFn } from "../../utils/logging";
+import { setClub } from "../playerNameEntry/playerNameEntrySlice";
 
 const log = logFn("features.subscriptions.Subscriptions.");
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -103,7 +103,7 @@ export default function Subscriptions({ clubId }: SubscriptionsParams) {
       clubIdVarName = "clubId",
     ) => {
       try {
-        deleteSub(pool, dispatch, subId);
+        deleteSub(pool, dispatch, subId, log, "debug");
         log("subs.deletedAndSubscribingTo", "debug", { subId, clubId });
         if (!pool[subId]) {
           const variables: Record<string, unknown> = {};
@@ -174,6 +174,8 @@ export default function Subscriptions({ clubId }: SubscriptionsParams) {
           pool,
           dispatch,
           subId as keyof allSubscriptionsI /* actually safe */,
+          log,
+          "debug",
         );
       });
       stopListening();
