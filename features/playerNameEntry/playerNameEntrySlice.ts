@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Club } from "../../appsync";
+import { Club } from "../../scorebridge-ts-submodule/graphql/appsync";
 import { RootState } from "../../utils/store";
 
 export interface ClubState {

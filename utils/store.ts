@@ -6,7 +6,7 @@ import subscriptionStatesReducerKv from "../scorebridge-ts-submodule/subscriptio
 export const store = configureStore({
   reducer: {
     club: playerNameEntryReducer,
-    ...subscriptionStatesReducerKv,
+    subscriptionStates: subscriptionStatesReducerKv,
   },
 });
 
