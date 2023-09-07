@@ -1,11 +1,11 @@
 import { CognitoUser } from "amazon-cognito-identity-js";
-import { useState } from "react";
 
 import { logFn } from "./logging";
-const log = logFn("utils.useClubId");
+const log = logFn("utils.useClubId.");
 export const useClubId = (user: CognitoUser) => {
-  const [tenantId, setTenantId] = useState<string>();
+  log("useClubId", "debug");
   user.getUserAttributes((err, result) => {
+    log("getUserAttributes", "debug");
     if (err) {
       log("getUserAttributes.err", "error", err);
     }
@@ -19,7 +19,7 @@ export const useClubId = (user: CognitoUser) => {
     if (!local) {
       throw new Error("No custom:tenantId attribute found");
     }
-    setTenantId(local);
+    log("returningLocal", "debug", local);
+    return local;
   });
-  return tenantId;
 };

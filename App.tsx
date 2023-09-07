@@ -10,6 +10,7 @@ import { Provider as ReactReduxProvider } from "react-redux";
 // @ts-ignore
 // import { PersistGate } from "redux-persist/integration/react";
 import { RegTokenScreen } from "./components/RegTokenScreen";
+import { DiscoveredSignInResponseUserType } from "./features/playerNameEntry/DiscoveredSignInResponseUserType";
 import { PlayerNameEntryScreen } from "./features/playerNameEntry/playerNameEntryScreen";
 import {
   randomRegToken,
@@ -44,7 +45,9 @@ Amplify.configure({
 
 export default function App() {
   const [regToken] = useState(randomRegToken());
-  const [user, setUser] = useState<undefined | CognitoUser>(undefined);
+  const [user, setUser] = useState<
+    undefined | DiscoveredSignInResponseUserType
+  >(undefined);
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
@@ -53,7 +56,7 @@ export default function App() {
       password: regTokenSecretPart(regToken),
     };
     Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
-    const user = (await Auth.signIn(args)) as CognitoUser;
+    const user = (await Auth.signIn(args)) as DiscoveredSignInResponseUserType;
     Alert.alert(`done awaiting signin, !!user is ${!!user}`);
     if (user) {
       setUser(user);

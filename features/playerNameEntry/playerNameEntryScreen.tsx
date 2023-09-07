@@ -1,18 +1,25 @@
-import { CognitoUser } from "amazon-cognito-identity-js";
 import { StyleSheet, Text } from "react-native";
 
 import { selectSubscriptionStateById } from "../../scorebridge-ts-submodule/subscriptionStatesSlice";
 import { useAppSelector } from "../../utils/hooks";
-import { useClubId } from "../../utils/useClubId";
 import useSubscriptions from "../subscriptions/useSubscriptions";
+import { DiscoveredSignInResponseUserType } from "./DiscoveredSignInResponseUserType";
 import { selectClub } from "./playerNameEntrySlice";
 
 export interface PlayerNameEntryScreenParams {
-  user: CognitoUser;
+  user: DiscoveredSignInResponseUserType;
 }
 export function PlayerNameEntryScreen({ user }: PlayerNameEntryScreenParams) {
+  /* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment */
+  // @ts-ignore
+  const clubId = user.attributes["custom:tenantId"];
+  /* eslint-enable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment */
   const club = useAppSelector(selectClub);
-  const clubId = useClubId(user);
+  if (!clubId) {
+    throw new Error(
+      `No clubId found for clubDevice user ${JSON.stringify(user, null, 2)}`,
+    );
+  }
   useSubscriptions(clubId);
   const clubSubStatus = useAppSelector(
     selectSubscriptionStateById("updatedClub"),

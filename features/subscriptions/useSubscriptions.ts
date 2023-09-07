@@ -20,7 +20,7 @@ const log = logFn("features.subscriptions.Subscriptions.");
 const lcd = logCompletionDecoratorFactory(log, false);
 
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment */
-const fetchRecentData = async (dispatch: any, clubId?: string) => {
+const fetchRecentData = async (dispatch: any, clubId: string) => {
   // Retrieve some/all data from AppSync
   return gqlMutation<Club>(
     gql`
@@ -49,7 +49,7 @@ const fetchRecentData = async (dispatch: any, clubId?: string) => {
   });
 };
 
-function subscribeAndFetch(dispatch: any, clubId?: string) {
+function subscribeAndFetch(dispatch: any, clubId: string) {
   log("hubListen.connected", "debug");
   typedSubscription({
     subId: "updatedClub",
@@ -65,40 +65,36 @@ function subscribeAndFetch(dispatch: any, clubId?: string) {
   void lcd(fetchRecentData(dispatch, clubId), "hubListen.subscribeAndFetch");
 }
 
-export default function useSubscriptions(clubId?: string) {
+export default function useSubscriptions(clubId: string) {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (clubId) {
-      log("initialFetch", "debug");
-      let priorConnectionState: ConnectionState;
-      log("hubListen.api.beforestart", "debug");
-      subscribeAndFetch(dispatch, clubId);
+    log("initialFetch", "debug");
+    let priorConnectionState: ConnectionState;
+    log("hubListen.api.beforestart", "debug");
+    subscribeAndFetch(dispatch, clubId);
 
-      log("hubListen.api.before", "debug");
-      const stopListening = Hub.listen("api", (data: any) => {
-        // log("hubListen.api.callback", "error", { data });
-        const { payload } = data;
-        if (payload.event === CONNECTION_STATE_CHANGE) {
-          if (
-            priorConnectionState === ConnectionState.Connecting &&
-            payload.data.connectionState === ConnectionState.Connected
-          ) {
-            void lcd(
-              fetchRecentData(dispatch, clubId),
-              "hublisten.api.fetchRecentData",
-            );
-          }
-          priorConnectionState = payload.data.connectionState;
-        } else {
-          log("hubListen.api.callback.disregardingEvent", "error", { payload });
+    log("hubListen.api.before", "debug");
+    const stopListening = Hub.listen("api", (data: any) => {
+      // log("hubListen.api.callback", "error", { data });
+      const { payload } = data;
+      if (payload.event === CONNECTION_STATE_CHANGE) {
+        if (
+          priorConnectionState === ConnectionState.Connecting &&
+          payload.data.connectionState === ConnectionState.Connected
+        ) {
+          void lcd(
+            fetchRecentData(dispatch, clubId),
+            "hublisten.api.fetchRecentData",
+          );
         }
-      });
-      return () => {
-        deleteAllSubs(dispatch);
-        stopListening();
-      };
-    } else {
-      log("useSubscriptions.noClubId", "error");
-    }
+        priorConnectionState = payload.data.connectionState;
+      } else {
+        log("hubListen.api.callback.disregardingEvent", "error", { payload });
+      }
+    });
+    return () => {
+      deleteAllSubs(dispatch);
+      stopListening();
+    };
   }, [dispatch, clubId]);
 }
