@@ -7,8 +7,9 @@ import { useDispatch } from "react-redux";
 import { Club } from "../../scorebridge-ts-submodule/graphql/appsync";
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
 import {
+  AccessParams,
   deleteAllSubs,
-  typedSubscription,
+  generateTypedSubscription,
 } from "../../scorebridge-ts-submodule/subscriptions";
 import { gqlMutation } from "../../utils/gql";
 import { logFn } from "../../utils/logging";
@@ -49,33 +50,30 @@ const fetchRecentData = async (dispatch: any, clubId: string) => {
   });
 };
 
-function subscribeAndFetch(dispatch: any, clubId: string) {
+function subscribeToAll(dispatch: any, clubId: string) {
   log("hubListen.connected", "debug");
-  typedSubscription({
-    subId: "updatedClub",
-    clubId,
-    callback: (res) => {
+  const accessParams: AccessParams = { dispatch, clubId };
+  generateTypedSubscription(
+    accessParams,
+    "updatedClub",
+    (res) => {
       log("typedSubscription.updatedClubCallback", "debug", { res });
       dispatch(setClub(res.updatedClub));
     },
-    dispatch,
-    clubIdVarName: "id",
-  });
-
-  void lcd(fetchRecentData(dispatch, clubId), "hubListen.subscribeAndFetch");
+    "id",
+  );
 }
 
 export default function useSubscriptions(clubId: string) {
   const dispatch = useDispatch();
   useEffect(() => {
-    log("initialFetch", "debug");
+    log("useEffect", "debug");
     let priorConnectionState: ConnectionState;
     log("hubListen.api.beforestart", "debug");
-    subscribeAndFetch(dispatch, clubId);
+    subscribeToAll(dispatch, clubId);
 
     log("hubListen.api.before", "debug");
     const stopListening = Hub.listen("api", (data: any) => {
-      // log("hubListen.api.callback", "error", { data });
       const { payload } = data;
       if (payload.event === CONNECTION_STATE_CHANGE) {
         if (
@@ -89,12 +87,12 @@ export default function useSubscriptions(clubId: string) {
         }
         priorConnectionState = payload.data.connectionState;
       } else {
-        log("hubListen.api.callback.disregardingEvent", "error", { payload });
+        log("hubListen.api.callback.disregardingEvent", "debug", { payload });
       }
     });
     return () => {
       deleteAllSubs(dispatch);
       stopListening();
     };
-  }, [dispatch, clubId]);
+  }, [clubId, dispatch]);
 }

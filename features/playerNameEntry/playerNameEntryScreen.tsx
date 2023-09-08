@@ -23,7 +23,7 @@ export function PlayerNameEntryScreen({ user }: PlayerNameEntryScreenParams) {
   useSubscriptions(clubId);
   const clubSubStatus = useAppSelector(
     selectSubscriptionStateById("updatedClub"),
-  );
+  ) as string;
 
   return (
     <Text style={styles.container}>

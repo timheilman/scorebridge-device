@@ -30,7 +30,7 @@ export const RegTokenScreen = (props: {
       </View>
       <IconButton
         icon="cards-playing"
-        label={i18n.t("regTokenScreen.OnboardThisDevice")}
+        label={i18n.t("regTokenScreen.LetsScoreBridge")}
         onPress={props.onPress}
       />
     </View>
