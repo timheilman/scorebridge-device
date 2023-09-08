@@ -11,6 +11,7 @@ import { Provider as ReactReduxProvider } from "react-redux";
 // import { PersistGate } from "redux-persist/integration/react";
 import { RegTokenScreen } from "./components/RegTokenScreen";
 import { DiscoveredSignInResponseUserType } from "./features/playerNameEntry/DiscoveredSignInResponseUserType";
+import FoundUserScreen from "./features/playerNameEntry/FoundUserScreen";
 import { PlayerNameEntryScreen } from "./features/playerNameEntry/playerNameEntryScreen";
 import {
   randomRegToken,
@@ -79,7 +80,7 @@ export default function App() {
       {/*<PersistGate>*/}
       <GestureHandlerRootView style={styles.container}>
         {user ? (
-          <PlayerNameEntryScreen user={user} />
+          <FoundUserScreen clubId={user.attributes["custom:tenantId"]} />
         ) : (
           <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
         )}
