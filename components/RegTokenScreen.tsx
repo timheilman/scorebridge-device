@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import i18n from "../i18n";
+import i18n from "../utils/i18n";
 import { requiredExpoPublicEnvVar } from "../utils/requiredExpoPublicEnvVar";
 import IconButton from "./IconButton";
 

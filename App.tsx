@@ -1,4 +1,3 @@
-import { CognitoUser } from "amazon-cognito-identity-js";
 import { Amplify, Auth } from "aws-amplify";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
@@ -12,7 +11,6 @@ import { Provider as ReactReduxProvider } from "react-redux";
 import { RegTokenScreen } from "./components/RegTokenScreen";
 import { DiscoveredSignInResponseUserType } from "./features/playerNameEntry/DiscoveredSignInResponseUserType";
 import FoundUserScreen from "./features/playerNameEntry/FoundUserScreen";
-import { PlayerNameEntryScreen } from "./features/playerNameEntry/playerNameEntryScreen";
 import {
   randomRegToken,
   regTokenSecretPart,
@@ -80,7 +78,10 @@ export default function App() {
       {/*<PersistGate>*/}
       <GestureHandlerRootView style={styles.container}>
         {user ? (
-          <FoundUserScreen clubId={user.attributes["custom:tenantId"]} />
+          <FoundUserScreen
+            clubId={user.attributes["custom:tenantId"]}
+            clubDeviceId={user.attributes["sub"]}
+          />
         ) : (
           <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />
         )}

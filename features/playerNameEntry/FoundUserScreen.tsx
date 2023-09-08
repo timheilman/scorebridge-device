@@ -1,18 +1,22 @@
 import SubscriptionsComponent from "../subscriptions/SubscriptionsComponent";
-import { PlayerNameEntryScreen } from "./playerNameEntryScreen";
+import TableNumberForm from "../tableNumberEntry/TableNumberForm";
 
 export interface FoundUserScreenParams {
   clubId?: string;
+  clubDeviceId?: string;
 }
-export default function FoundUserScreen({ clubId }: FoundUserScreenParams) {
-  if (!clubId) {
-    throw new Error("clubId should not be null here");
+export default function FoundUserScreen({
+  clubId,
+  clubDeviceId,
+}: FoundUserScreenParams) {
+  if (!clubId || !clubDeviceId) {
+    throw new Error("neither clubId nore clubDeviceId should be null here");
   }
 
   return (
     <>
       <SubscriptionsComponent clubId={clubId} />
-      <PlayerNameEntryScreen />
+      <TableNumberForm clubId={clubId} clubDeviceId={clubDeviceId} />
     </>
   );
 }

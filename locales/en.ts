@@ -7,4 +7,10 @@ export const en = {
     AdminPortalUrl: "Admin Portal URL",
     LetsScoreBridge: "Let's Score Bridge!",
   },
+  tableNumberForm: {
+    tableNumber: {
+      label: "Please enter your table number and press the green button:",
+    },
+    submit: "Change my table number",
+  },
 };
