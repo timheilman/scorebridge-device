@@ -13,7 +13,7 @@ export function PlayerNameEntryScreen() {
   return (
     <>
       <Text style={styles.container}>
-        Does a text imported from react-native here? My club&apos;s name is
+        Does a text imported from react-native here? My club&apos;s name is{" "}
         {club ? club.name : "club data loading..."}; my subscription status is{" "}
         {clubSubStatus}
       </Text>

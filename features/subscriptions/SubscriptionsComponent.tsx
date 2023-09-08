@@ -1,14 +1,13 @@
-import gql from "graphql-tag";
-
-import { setClub } from "../features/playerNameEntry/playerNameEntrySlice";
-import { Club } from "../scorebridge-ts-submodule/graphql/appsync";
+import { Club } from "../../scorebridge-ts-submodule/graphql/appsync";
 import {
   AccessParams,
   generateTypedSubscription,
   useSubscriptions,
-} from "../scorebridge-ts-submodule/subscriptions";
-import { gqlMutation } from "../utils/gql";
-import { logFn } from "../utils/logging";
+} from "../../scorebridge-ts-submodule/subscriptions";
+import { gqlMutation } from "../../utils/gql";
+import { logFn } from "../../utils/logging";
+import { setClub } from "../playerNameEntry/playerNameEntrySlice";
+import { getClubGql } from "./gql/getClub";
 const log = logFn("src.features.subscriptions.SubscriptionComponent.");
 export interface SubscriptionComponentParams {
   clubId: string;
@@ -18,18 +17,9 @@ export default function SubscriptionsComponent({
 }: SubscriptionComponentParams) {
   const fetchRecentData = async ({ dispatch, clubId }: AccessParams) => {
     // Retrieve some/all data from AppSync
-    return gqlMutation<Club>(
-      gql`
-        query getClub($clubId: String!) {
-          getClub(clubId: $clubId) {
-            name
-          }
-        }
-      `,
-      {
-        clubId,
-      },
-    ).then((res) => {
+    return gqlMutation<Club>(getClubGql, {
+      clubId,
+    }).then((res) => {
       if (res.errors) {
         throw new Error(JSON.stringify(res.errors, null, 2));
       }
@@ -37,7 +27,6 @@ export default function SubscriptionsComponent({
         throw new Error("no gql response data");
       }
       const d = (res.data as unknown as { getClub: Club }).getClub;
-      log("dispatchingSetClub", "debug", { res });
       log("dispatchingSetClub.data.getClub", "debug", {
         it: JSON.stringify(d, null, 2),
       });

@@ -1,4 +1,4 @@
-import SubscriptionsComponent from "../../components/SubscriptionsComponent";
+import SubscriptionsComponent from "../subscriptions/SubscriptionsComponent";
 import { PlayerNameEntryScreen } from "./playerNameEntryScreen";
 
 export interface FoundUserScreenParams {
