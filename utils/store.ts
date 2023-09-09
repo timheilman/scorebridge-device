@@ -1,12 +1,14 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 
 import playerNameEntryReducer from "../features/playerNameEntry/playerNameEntrySlice";
-import subscriptionStatesReducerKv from "../scorebridge-ts-submodule/subscriptionStatesSlice";
+import tableNumberEntryReducer from "../features/tableNumberEntry/tableNumberEntrySlice";
+import subscriptionStatesReducer from "../scorebridge-ts-submodule/subscriptionStatesSlice";
 
 export const store = configureStore({
   reducer: {
     club: playerNameEntryReducer,
-    subscriptionStates: subscriptionStatesReducerKv,
+    clubDevice: tableNumberEntryReducer,
+    subscriptionStates: subscriptionStatesReducer,
   },
 });
 

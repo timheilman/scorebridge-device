@@ -8,9 +8,10 @@ export const en = {
     LetsScoreBridge: "Let's Score Bridge!",
   },
   tableNumberForm: {
+    current: "Current table number:",
     tableNumber: {
       label: "Please enter your table number and press the green button:",
     },
-    submit: "Change my table number",
+    submit: "Set my table number",
   },
 };

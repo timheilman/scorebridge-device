@@ -1,6 +1,5 @@
 import SubscriptionsComponent from "../subscriptions/SubscriptionsComponent";
 import TableNumberForm from "../tableNumberEntry/TableNumberForm";
-
 export interface FoundUserScreenParams {
   clubId?: string;
   clubDeviceId?: string;
@@ -15,7 +14,7 @@ export default function FoundUserScreen({
 
   return (
     <>
-      <SubscriptionsComponent clubId={clubId} />
+      <SubscriptionsComponent clubId={clubId} clubDeviceId={clubDeviceId} />
       <TableNumberForm clubId={clubId} clubDeviceId={clubDeviceId} />
     </>
   );

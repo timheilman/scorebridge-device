@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
 import { MaybeFooterElement } from "../../scorebridge-ts-submodule/MaybeFooterElement";
 import { gqlMutation } from "../../utils/gql";
+import { useAppSelector } from "../../utils/hooks";
 import i18n from "../../utils/i18n";
 import { logFn } from "../../utils/logging";
 import { setTableNumberGql } from "./gql/setTableNumber";
+import { selectClubDevice } from "./tableNumberEntrySlice";
 export interface TableNumberFormParams {
   clubId: string;
   clubDeviceId: string;
@@ -21,15 +23,23 @@ export default function TableNumberForm({
   const [everSubmitted, setEverSubmitted] = useState(false);
   const [errStr, setErrStr] = useState<string | null>(null);
   const [tableNumberText, setTableNumberText] = useState("");
-  const getTableNumber = (tableNumberText: string) => {
+  const tableNumberCloud = useAppSelector(selectClubDevice)?.table;
+  // const updatedClubDeviceStatus = useAppSelector(
+  //   selectSubscriptionStateById("updatedClubDevice"),
+  // ) as string;
+  useEffect(() => {
+    setTableNumberText(tableNumberCloud?.toString() ?? "");
+  }, [tableNumberCloud]);
+  const parsedTableNumber = (tableNumberText: string) => {
     try {
       return Number.parseInt(tableNumberText);
     } catch (e) {
-      log("getTableNumber.notANumber", "error", e);
-      return -1;
+      log("parsedTableNumber.notANumber", "error", e);
+      return 0;
     }
   };
-  const tableNumber = getTableNumber(tableNumberText);
+  const tableNumber = parsedTableNumber(tableNumberText);
+
   const handleSubmit = () => {
     setSubmitInFlight(true);
     setEverSubmitted(true);
@@ -59,12 +69,18 @@ export default function TableNumberForm({
   return (
     <>
       <View style={styles.tableNumberContainer}>
+        {/*<Text style={{ fontSize: 24, color: "#fff" }}>*/}
+        {/*  sub status: {updatedClubDeviceStatus}*/}
+        {/*</Text>*/}
+        <Text style={styles.barelyLegible}>
+          {i18n.t("tableNumberForm.current")} {tableNumberCloud}
+        </Text>
         <Text style={styles.barelyLegible}>
           {i18n.t("tableNumberForm.tableNumber.label")}
         </Text>
         <TextInput
           style={[styles.barelyLegible, styles.inputField]}
-          placeholder="    "
+          placeholder="        "
           onChangeText={handleChangeTableNumber}
           defaultValue={tableNumberText}
           data-test-id="formSetTableNumberTableNumber"
