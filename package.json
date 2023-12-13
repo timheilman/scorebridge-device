@@ -28,7 +28,7 @@
     "@types/react": "~18.2.14",
     "aws-amplify": "^5.3.10",
     "expo": "~49.0.8",
-    "expo-localization": "^14.3.0",
+    "expo-localization": "~14.3.0",
     "expo-status-bar": "~1.6.0",
     "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
