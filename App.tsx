@@ -48,7 +48,6 @@ export default function App() {
     undefined | DiscoveredSignInResponseUserType
   >(undefined);
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   const onDispatchRegisterAsync = async () => {
     const args = {
       username: regTokenToEmail(regToken, requiredExpoPublicEnvVar("STAGE")),

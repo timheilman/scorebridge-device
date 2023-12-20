@@ -3,8 +3,15 @@
   "compilerOptions": {
     "strict": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
-  "include": ["components", "scorebridge-ts-submodule", "App.tsx", "locales", "utils", "features/**/*"],
+  "include": [
+    "components",
+    "scorebridge-ts-submodule",
+    "App.tsx",
+    "locales",
+    "utils",
+    "features/**/*"
+  ],
   "exclude": ["node_modules/**/*", "babel.config.js", "metro.config.js"]
 }
