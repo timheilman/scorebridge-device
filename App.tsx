@@ -54,9 +54,9 @@ export default function App() {
       username: regTokenToEmail(regToken, requiredExpoPublicEnvVar("STAGE")),
       password: regTokenSecretPart(regToken),
     };
-    Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
+    // Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
     const user = (await Auth.signIn(args)) as DiscoveredSignInResponseUserType;
-    Alert.alert(`done awaiting signin, !!user is ${!!user}`);
+    // Alert.alert(`done awaiting signin, !!user is ${!!user}`);
     if (user) {
       setUser(user);
     }
