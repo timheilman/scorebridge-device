@@ -3,12 +3,28 @@
     "version": ">= 5.9.1"
   },
   "build": {
-    "development": {
+    "dev": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_AWS_REGION": "us-west-2",
+        "EXPO_PUBLIC_COGNITO_USER_POOL_ID": "us-west-2_aCx2jvgZP",
+        "EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE": "62uhidokidlqvs4hru7m2t62pj",
+        "EXPO_PUBLIC_API_URL": "https://rl4xw3qddfgrvpavgf7qdeacmm.appsync-api.us-west-2.amazonaws.com/graphql",
+        "EXPO_PUBLIC_PORTAL_URL": "https://dev.d2efhllh5f21k3.amplifyapp.com/",
+        "EXPO_PUBLIC_STAGE": "dev"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_AWS_REGION": "us-west-2",
+        "EXPO_PUBLIC_COGNITO_USER_POOL_ID": "us-west-2_aCx2jvgZP",
+        "EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE": "62uhidokidlqvs4hru7m2t62pj",
+        "EXPO_PUBLIC_API_URL": "https://rl4xw3qddfgrvpavgf7qdeacmm.appsync-api.us-west-2.amazonaws.com/graphql",
+        "EXPO_PUBLIC_PORTAL_URL": "https://dev.d2efhllh5f21k3.amplifyapp.com/",
+        "EXPO_PUBLIC_STAGE": "dev"
+      }
     },
     "production": {}
   },
