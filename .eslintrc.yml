@@ -12,7 +12,10 @@ extends:
 #  - plugin:chai-friendly/recommended
 ignorePatterns:
   - "babel.config.js"
-  - "scorebridge-ts-submodule/react"
+  - "scorebridge-ts-submodule/tsSubmoduleLog.ts"
+  - "node_modules/"
+  - ".expo/"
+  - "metro.config.js"
 parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: latest
