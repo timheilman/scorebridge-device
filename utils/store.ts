@@ -2,7 +2,7 @@ import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 
 import playerNameEntryReducer from "../features/playerNameEntry/playerNameEntrySlice";
 import tableNumberEntryReducer from "../features/tableNumberEntry/tableNumberEntrySlice";
-import subscriptionStatesReducer from "../scorebridge-ts-submodule/subscriptionStatesSlice";
+import subscriptionStatesReducer from "../scorebridge-ts-submodule/react/subscriptionStatesSlice";
 
 export const store = configureStore({
   reducer: {

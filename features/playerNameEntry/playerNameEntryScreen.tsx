@@ -1,13 +1,13 @@
 import { StyleSheet, Text } from "react-native";
 
-import { selectSubscriptionStateById } from "../../scorebridge-ts-submodule/subscriptionStatesSlice";
+import { selectSubscriptionStateById } from "../../scorebridge-ts-submodule/react/subscriptionStatesSlice";
 import { useAppSelector } from "../../utils/hooks";
 import { selectClub } from "./playerNameEntrySlice";
 
 export function PlayerNameEntryScreen() {
   const club = useAppSelector(selectClub);
   const clubSubStatus = useAppSelector(
-    selectSubscriptionStateById("updatedClub"),
+    selectSubscriptionStateById("onUpdateClub"),
   ) as string;
 
   return (

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
+import { setTableNumberGql } from "../../scorebridge-ts-submodule/graphql/mutations";
 import { logCompletionDecoratorFactory } from "../../scorebridge-ts-submodule/logCompletionDecorator";
-import { MaybeFooterElement } from "../../scorebridge-ts-submodule/MaybeFooterElement";
-import { gqlMutation } from "../../utils/gql";
+import { client } from "../../scorebridge-ts-submodule/react/gqlClient";
+import { MaybeFooterElement } from "../../scorebridge-ts-submodule/react/MaybeFooterElement";
 import { useAppSelector } from "../../utils/hooks";
 import i18n from "../../utils/i18n";
 import { logFn } from "../../utils/logging";
-import { setTableNumberGql } from "./gql/setTableNumber";
 import { selectClubDevice } from "./tableNumberEntrySlice";
 export interface TableNumberFormParams {
   clubId: string;
   clubDeviceId: string;
 }
 const log = logFn("src.features.tableNumberEntry.TableNumberForm.");
-const lcd = logCompletionDecoratorFactory(log, true, "debug", "error");
+const lcd = logCompletionDecoratorFactory(log, "debug", "error");
 export default function TableNumberForm({
   clubId,
   clubDeviceId,
@@ -24,8 +24,8 @@ export default function TableNumberForm({
   const [errStr, setErrStr] = useState<string | null>(null);
   const [tableNumberText, setTableNumberText] = useState("");
   const tableNumberCloud = useAppSelector(selectClubDevice)?.table;
-  // const updatedClubDeviceStatus = useAppSelector(
-  //   selectSubscriptionStateById("updatedClubDevice"),
+  // const onUpdateClubDeviceStatus = useAppSelector(
+  //   selectSubscriptionStateById("onUpdateClubDevice"),
   // ) as string;
   useEffect(() => {
     setTableNumberText(tableNumberCloud?.toString() ?? "");
@@ -45,8 +45,11 @@ export default function TableNumberForm({
     setEverSubmitted(true);
     try {
       void lcd(
-        gqlMutation(setTableNumberGql, {
-          input: { clubId, clubDeviceId, table: tableNumber },
+        client.graphql({
+          query: setTableNumberGql,
+          variables: {
+            input: { clubId, clubDeviceId, table: tableNumber },
+          },
         }),
         "setTableNumber",
       );
@@ -70,7 +73,7 @@ export default function TableNumberForm({
     <>
       <View style={styles.tableNumberContainer}>
         {/*<Text style={{ fontSize: 24, color: "#fff" }}>*/}
-        {/*  sub status: {updatedClubDeviceStatus}*/}
+        {/*  sub status: {onUpdateClubDeviceStatus}*/}
         {/*</Text>*/}
         <Text style={styles.barelyLegible}>
           {i18n.t("tableNumberForm.current")} {tableNumberCloud}
@@ -87,11 +90,7 @@ export default function TableNumberForm({
         />
         <Pressable
           style={styles.button}
-          disabled={
-            submitInFlight ||
-            !tableNumberText ||
-            !tableNumberText.match(/^[0-9]{1,3}$/)
-          }
+          disabled={submitInFlight || !tableNumberText?.match(/^[0-9]{1,3}$/)}
           onPress={handleSubmit}
         >
           <Text style={styles.barelyLegible}>

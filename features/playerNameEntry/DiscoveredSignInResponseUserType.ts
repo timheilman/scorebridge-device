@@ -1,5 +1,3 @@
-export type DiscoveredSignInResponseUserType = {
-  attributes: {
-    [s: string]: string;
-  };
-};
+export interface DiscoveredSignInResponseUserType {
+  attributes: Record<string, string>;
+}

@@ -1,16 +1,18 @@
 env:
   browser: true
   es2021: true
+#  react-native/react-native: true
 extends:
   - eslint:recommended
-  - plugin:@typescript-eslint/recommended
-  - plugin:@typescript-eslint/recommended-requiring-type-checking
+  - plugin:@typescript-eslint/recommended-type-checked
+  - plugin:@typescript-eslint/stylistic-type-checked
   - plugin:react/recommended
   - plugin:react-hooks/recommended
 #  - plugin:cypress/recommended
 #  - plugin:chai-friendly/recommended
 ignorePatterns:
   - "babel.config.js"
+  - "scorebridge-ts-submodule/react"
 parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: latest
@@ -23,6 +25,7 @@ plugins:
   - "simple-import-sort"
   - react
   - react-hooks
+#  - react-native
 #  - chai-friendly
 rules:
   "sort-imports": "off"

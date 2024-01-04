@@ -1,15 +1,16 @@
-import { Amplify, Auth } from "aws-amplify";
+import "expo-dev-client";
+import "react-native-get-random-values"; // trying to fix subscription errors
+
+import { Amplify } from "aws-amplify";
+import { fetchAuthSession, signIn, signOut } from "aws-amplify/auth";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Alert, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider as ReactReduxProvider } from "react-redux";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 // import { PersistGate } from "redux-persist/integration/react";
 import { RegTokenScreen } from "./components/RegTokenScreen";
-import { DiscoveredSignInResponseUserType } from "./features/playerNameEntry/DiscoveredSignInResponseUserType";
 import FoundUserScreen from "./features/playerNameEntry/FoundUserScreen";
 import {
   randomRegToken,
@@ -18,46 +19,72 @@ import {
 } from "./scorebridge-ts-submodule/regTokenUtils";
 import { requiredExpoPublicEnvVar } from "./utils/requiredExpoPublicEnvVar";
 import { store } from "./utils/store";
-Amplify.configure({
-  API: {
-    graphql_headers: async () => {
-      try {
-        const session = await Auth.currentSession();
-        return {
-          Authorization: session.getIdToken().getJwtToken(),
-        };
-      } catch (e) {
-        return {};
-      }
+
+Amplify.configure(
+  {
+    API: {
+      GraphQL: {
+        endpoint: requiredExpoPublicEnvVar("API_URL"),
+        region: requiredExpoPublicEnvVar("AWS_REGION"),
+        defaultAuthMode: "userPool",
+      },
+    },
+    Auth: {
+      Cognito: {
+        userPoolClientId: requiredExpoPublicEnvVar(
+          "COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE",
+        ),
+        userPoolId: requiredExpoPublicEnvVar("COGNITO_USER_POOL_ID"),
+      },
     },
   },
-  Auth: {
-    region: requiredExpoPublicEnvVar("AWS_REGION"),
-    userPoolId: requiredExpoPublicEnvVar("COGNITO_USER_POOL_ID"),
-    userPoolWebClientId: requiredExpoPublicEnvVar(
-      "COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE",
-    ),
+  {
+    API: {
+      GraphQL: {
+        headers: async () => {
+          try {
+            const session = await fetchAuthSession();
+            return {
+              Authorization: session?.tokens?.idToken?.toString(),
+            };
+          } catch (e) {
+            return {};
+          }
+        },
+      },
+    },
   },
-  aws_appsync_graphqlEndpoint: requiredExpoPublicEnvVar("API_URL"),
-  aws_appsync_region: requiredExpoPublicEnvVar("AWS_REGION"),
-});
+);
 
 export default function App() {
   const [regToken] = useState(randomRegToken());
   const [user, setUser] = useState<
-    undefined | DiscoveredSignInResponseUserType
+    undefined | { clubId: string; clubDeviceId: string }
   >(undefined);
 
   const onDispatchRegisterAsync = async () => {
-    const args = {
+    // Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
+    await signOut();
+    const signInOutput = await signIn({
       username: regTokenToEmail(regToken, requiredExpoPublicEnvVar("STAGE")),
       password: regTokenSecretPart(regToken),
-    };
-    // Alert.alert(`awaiting signin with values ${JSON.stringify(args)}`);
-    const user = (await Auth.signIn(args)) as DiscoveredSignInResponseUserType;
+      options: { authFlowType: "USER_PASSWORD_AUTH" },
+    });
     // Alert.alert(`done awaiting signin, !!user is ${!!user}`);
-    if (user) {
-      setUser(user);
+    if (signInOutput.isSignedIn) {
+      const { tokens } = await fetchAuthSession();
+      const idToken = tokens?.idToken;
+      if (!idToken) {
+        throw new Error(
+          "Unable to find idToken from amplify v6 fetchAuthSession",
+        );
+      }
+      //       dispatch(setCognitoGroups(idToken.payload["cognito:groups"] as string[]));
+      //       dispatch(setClubId(idToken.payload["custom:tenantId"] as string));
+      setUser({
+        clubDeviceId: idToken.payload.sub!,
+        clubId: idToken.payload["custom:tenantId"] as string,
+      });
     }
   };
 
@@ -78,8 +105,8 @@ export default function App() {
       <GestureHandlerRootView style={styles.container}>
         {user ? (
           <FoundUserScreen
-            clubId={user.attributes["custom:tenantId"]}
-            clubDeviceId={user.attributes["sub"]}
+            clubId={user.clubId}
+            clubDeviceId={user.clubDeviceId}
           />
         ) : (
           <RegTokenScreen regToken={regToken} onPress={dispatchRegister} />

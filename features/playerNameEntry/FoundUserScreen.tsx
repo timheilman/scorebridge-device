@@ -1,6 +1,6 @@
 import { Wifi, WifiOff } from "react-native-feather";
 
-import OnlineStatus from "../../scorebridge-ts-submodule/OnlineStatus";
+import OnlineStatus from "../../scorebridge-ts-submodule/react/OnlineStatus";
 import SubscriptionsComponent from "../subscriptions/SubscriptionsComponent";
 import TableNumberForm from "../tableNumberEntry/TableNumberForm";
 
@@ -20,7 +20,7 @@ export default function FoundUserScreen({
     <>
       <SubscriptionsComponent clubId={clubId} clubDeviceId={clubDeviceId} />
       <OnlineStatus
-        subscriptionIds={["updatedClub", "updatedClubDevice"]}
+        subscriptionIds={["onUpdateClub", "onUpdateClubDevice"]}
         upIcon={<Wifi fill="white" stroke="white" />}
         downIcon={<WifiOff fill="white" stroke="white" />}
       />
