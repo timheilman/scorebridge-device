@@ -11,6 +11,7 @@
     "App.tsx",
     "locales",
     "utils",
+    "app.config.js",
     "features/**/*"
   ],
   "exclude": ["node_modules/**/*", "babel.config.js", "metro.config.js"]

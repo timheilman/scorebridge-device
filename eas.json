@@ -7,6 +7,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
+        "APP_VARIANT": "dev",
         "EXPO_PUBLIC_AWS_REGION": "us-west-2",
         "EXPO_PUBLIC_COGNITO_USER_POOL_ID": "us-west-2_aCx2jvgZP",
         "EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE": "62uhidokidlqvs4hru7m2t62pj",
@@ -18,6 +19,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
+        "APP_VARIANT": "dev",
         "EXPO_PUBLIC_AWS_REGION": "us-west-2",
         "EXPO_PUBLIC_COGNITO_USER_POOL_ID": "us-west-2_aCx2jvgZP",
         "EXPO_PUBLIC_COGNITO_USER_POOL_CLIENT_ID_CLUB_DEVICE": "62uhidokidlqvs4hru7m2t62pj",
@@ -26,7 +28,8 @@
         "EXPO_PUBLIC_STAGE": "dev"
       }
     },
-    "production": {}
+    "production": {
+    }
   },
   "submit": {
     "production": {}
