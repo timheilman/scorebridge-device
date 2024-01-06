@@ -65,28 +65,33 @@ export default function SubscriptionsComponent({
 
   function subscribeToAll(accessParams: AccessParams) {
     log("hubListen.connected", "debug");
-    errorCatchingSubscription(
+    errorCatchingSubscription({
       accessParams,
-      "onUpdateClub",
-      subscriptionOnUpdateClub,
-      { id: accessParams.clubId },
-      (club) => {
+      subId: "onUpdateClub",
+      query: subscriptionOnUpdateClub,
+      variables: {
+        id: accessParams.clubId,
+      },
+      callback: (club) => {
         log("typedSubscription.onUpdateClubCallback", "debug", { club });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         accessParams.dispatch(setClub(club));
       },
-    );
-    errorCatchingSubscription(
+    });
+    errorCatchingSubscription({
       accessParams,
-      "onUpdateClubDevice",
-      subscriptionOnUpdateClubDevice,
-      { clubId: accessParams.clubId, clubDeviceId: accessParams.clubDeviceId },
-      (clubDevice) => {
+      subId: "onUpdateClubDevice",
+      query: subscriptionOnUpdateClubDevice,
+      variables: {
+        clubId: accessParams.clubId,
+        clubDeviceId: accessParams.clubDeviceId,
+      },
+      callback: (clubDevice) => {
         log("typedSubscription.onUpdateClubCallback", "debug", { clubDevice });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         accessParams.dispatch(setClubDevice(clubDevice));
       },
-    );
+    });
   }
   useSubscriptions({
     clubId,
